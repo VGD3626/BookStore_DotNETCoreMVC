@@ -1,0 +1,75 @@
+﻿@model IEnumerable<BookStore_MVC.ViewModels.BookViewModel>
+@using BookStore_MVC.Models
+@Html.AntiForgeryToken()
+@inject Microsoft.AspNetCore.Identity.SignInManager<User> _signInManager
+
+<div class="row">
+    @foreach (var book in Model)
+    {
+        <div class="col-md-4 d-flex">
+            <div class="card mb-4 shadow-sm position-relative">
+                <a asp-controller="Book" asp-action="GetBookDetails" asp-route-id="@book.Id">
+                    <img src="@book.CoverPhotoPath" class="grow img-thumbnail card-img-top" alt="Book Cover">
+                </a>
+
+                @if (_signInManager.IsSignedIn(User))
+                {
+                    <button class="btn btn-sm btn-success position-absolute"
+                            style="top: 10px; right: 10px;"
+                            onclick="addToCart('@book.Id')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+
+                }
+
+                <div class="card-body">
+                    <h3 class="card-title">@book.Title</h3>
+                    <p class="card-text">@book.Description</p>
+                    <p class="card-text"><strong>Price:</strong> $@book.Price</p> <!-- Displaying the price -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a asp-controller="Book" asp-action="GetBookDetails" asp-route-id="@book.Id" class="btn btn-sm btn-outline-secondary">
+                                View details
+                            </a>
+                        </div>
+                        <small class="text-muted">@book.Author</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function addToCart(bookId) {
+        fetch('/Books/AddToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Ensure you have this input in your form for CSRF protection
+            },
+            body: JSON.stringify(bookId) // Send bookId directly
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    throw new Error("You need to log in to add items to the cart.");
+                } else {
+                    return response.text().then(text => {
+                        if (text.startsWith("<!DOCTYPE")) {
+                            throw new Error("HTML response received. Possible server or authentication issue.");
+                        }
+                        throw new Error(text || response.statusText);
+                    });
+                }
+            })
+            .then(data => {
+                alert(data.message || 'Book added to cart successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add book to cart: ' + error.message);
+            });
+    }
+</script>

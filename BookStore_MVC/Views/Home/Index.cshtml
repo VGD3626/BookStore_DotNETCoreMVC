@@ -1,0 +1,50 @@
+﻿@using BookStore_MVC.Enums
+@using BookStore_MVC.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<User> _signInManager
+@{
+    ViewBag.Title = "Home";
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@if (ViewBag.userStatus==UserStatus.NewUser)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Welcome!</strong>
+        <br/>
+        Hello <strong>@(User.FindFirst("FirstName")?.Value + " " + User.FindFirst("LastName")?.Value)</strong>
+        We hope you enjoy your time here.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1>Welcome to Book Store</h1>
+        <p class="lead text-muted">You can find many books here</p>
+        <form class="form-inline justify-content-center" method="GET" asp-controller="Book" asp-action="Search">
+            <div class="row">
+                <div class="input-group">
+                    <select class="form-control" name="by" style="width: 118px; margin-right: 3px;">
+                        <option value="title" selected>Title</option>
+                        <option value="category">Category</option>
+                        <option value="author">Author</option>
+                    </select>
+                    <input type="text" name="search_query" class="form-control" style="width: 300px;" placeholder="Name of the Book"/> 
+                    <input class="btn btn-primary" type="submit" value="Search" style="margin-left: 10px;"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<div class="py-5 bg-light" style="margin-top: 150px;">
+    <div class="container">
+        <h3 class="h3">Top books</h3>
+        @await Component.InvokeAsync("TopBooks", new {count=3})
+    </div>
+</div> 

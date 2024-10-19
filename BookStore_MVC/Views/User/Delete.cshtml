@@ -1,0 +1,20 @@
+﻿@model BookStore_MVC.Models.User
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<h1>Delete User</h1>
+
+<div>
+    <h4>Are you sure you want to delete this user?</h4>
+    <h5>@Model.UserName (@Model.Email)</h5>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="ShowUsers" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

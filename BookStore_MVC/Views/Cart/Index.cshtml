@@ -1,0 +1,56 @@
+﻿@model IEnumerable<BookStore_MVC.ViewModels.BookViewModel>
+
+@{
+    ViewBag.Title = "Your Cart";
+}
+
+<h2 class="text-center my-4">Your Cart</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        Your cart is empty. <a asp-controller="Book" asp-action="ShowBooks" class="alert-link">Browse books</a> to add to your cart.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Cover</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@book.CoverPhotoPath" alt="@book.Title" class="img-thumbnail" style="width: 80px; height: auto;" />
+                        </td>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@string.Format("{0:C}", book.Price)</td>
+                        <td>
+                            <form asp-controller="Cart" asp-action="RemoveFromCart" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@book.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 text-right">
+        <h3>Total: @string.Format("{0:C}", Model.Sum(b => b.Price))</h3>
+        <form asp-controller="Cart" asp-action="Checkout" method="get" class="d-inline">
+            <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+        </form>
+    </div>
+}

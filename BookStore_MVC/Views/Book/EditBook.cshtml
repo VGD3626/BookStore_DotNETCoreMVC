@@ -1,0 +1,89 @@
+﻿@inject BookStore_MVC.Data.ILanguageRepository _languageRepository
+@inject BookStore_MVC.Data.ICategoryRepository _categoryRepository
+@model BookViewModel
+@{
+    ViewBag.Title = "Edit Book " + Model.Title;
+}
+
+<div class="container">
+    <h3 class="display-4">Edit Book</h3>
+    <form method="post" enctype="multipart/form-data" asp-controller="Book" asp-action="EditBook">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Id" hidden />
+
+        <div class="form-group">
+            <label asp-for="Title"></label>
+            <input class="form-control" asp-for="Title" placeholder="Enter the Title of the Book">
+            <span class="text-danger" asp-validation-for="Title"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Author"></label>
+            <input class="form-control" asp-for="Author" placeholder="Enter the Author of the Book">
+            <span class="text-danger" asp-validation-for="Author"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea class="form-control" asp-for="Description" placeholder="Brief Description of The Book"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CategoryIds"></label>
+            <select class="form-control" asp-for="CategoryIds"
+                    asp-items=@((await _categoryRepository.GetAllCategories()).Select(c => new SelectListItem(){Text=c.Name, Value=c.Id.ToString()}))></select>
+            <span class="text-danger" asp-validation-for="CategoryIds"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LanguageId"></label>
+            <select class="form-control" asp-for="LanguageId"
+                    asp-items=@((await _languageRepository.GetAllLanguages()).Select(l => new SelectListItem(){Text=l.Name, Value=l.Id.ToString()}))>
+                <option value="">Please Select</option>
+            </select>
+            <span class="text-danger" asp-validation-for="LanguageId"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TotalPages"></label>
+            <input class="form-control" asp-for="TotalPages" placeholder="Enter the Number of pages">
+            <span class="text-danger" asp-validation-for="TotalPages"></span>
+        </div>
+
+        <!-- New Price Field -->
+        <div class="form-group">
+            <label asp-for="Price"></label>
+            <input class="form-control" asp-for="Price" placeholder="Enter the Price of the Book">
+            <span class="text-danger" asp-validation-for="Price"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Pdf"></label>
+            <input asp-for="Pdf" class="form-control-file">
+            <span class="text-danger" asp-validation-for="Pdf"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CoverPhoto"></label>
+            <input asp-for="CoverPhoto" class="form-control-file">
+            <span class="text-danger" asp-validation-for="CoverPhoto"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="GalleryFiles" class="control-label"></label>
+            <div class="custom-file">
+                <input asp-for="GalleryFiles" class="custom-file-input">
+                <label class="custom-file-label" asp-for="GalleryFiles">Choose Gallery files</label>
+            </div>
+            <span class="text-danger" asp-validation-for="GalleryFiles"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Update" class="btn btn-primary">
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script src="~/js/BookForm.js"></script>
+}
